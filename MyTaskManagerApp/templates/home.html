@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Task Manager</h1>
+        
+        <!-- Add Task Form -->
+        <form method="POST" action="{{ url_for('add') }}">
+            <input type="text" name="content" placeholder="Task content" required>
+            <input type="date" name="due_date" required>
+            <select name="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <input type="text" name="category" placeholder="Category" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <!-- Search Bar -->
+        <form method="GET" action="/">
+            <input type="text" name="search" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Task Statistics -->
+        <h2>Total Tasks: {{ total }}</h2>
+        <h3>Completed Tasks: {{ completed }}</h3>
+
+        <!-- Task List -->
+        <ul>
+            {% for task in tasks %}
+                <li class="task {% if task.done == 1 %}completed{% endif %}">
+                    <div>
+                        <strong>{{ task.content }}</strong> <br>
+                        <small>Due: {{ task.due_date }}</small> <br>
+                        <small>Priority: {{ task.priority }}</small> <br>
+                        <small>Category: {{ task.category }}</small>
+                    </div>
+                    {% if task.done == 0 %}
+                        <a href="{{ url_for('done', task_id=task.id) }}">Mark as Done</a>
+                    {% else %}
+                        <span>Completed</span>
+                    {% endif %}
+                    <a href="{{ url_for('delete', task_id=task.id) }}">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
